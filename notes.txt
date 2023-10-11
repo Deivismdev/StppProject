@@ -1,0 +1,48 @@
+• Suprojektuoti ir realizuoti REST principais veikiančią API sąsają. Turi būti realizuoti visi užduotyje numatyti API sąsajos metodai!
+• Paruošti programavimo aplinką leidžiančią atsiskaitymo metu patogiai paleisti ir pademonstruoti programą.
+• Duomenų saugojimui turi būti panaudotas pasirinktas DB sprendimas. Gynimo metu DB turi būti užpildyta prasmingais (uždavinį atitinkančiais) duomenimis;
+• Turi būti galimybė iškviesti sąsajos funkcijas (naudojantis naršykle, Postman ar kitu įrankiu) ir gauti teisingai suformuotą atsakymą: prasmingas turinys, 
+  teisingas turinio tipas (json, xml, atom, text ar kt.), teisingas atsako kodas (http reponse code);
+• Projekto kodas turi būti laikomas Git saugykloje (github, bitbucket, gitlab ar kt.). Dokumentacija - projektui sukurtame wiki arba projekto kodo Git saugykloje (.readme).
+
+/api/album                                                      GET          list    200
+/api/album/{albumId}                                            GET          one     200
+/api/album                                                      POST         create  201
+/api/album/{albumId}                                            PUT/PATCH    edit    200
+/api/album/{albumId}                                            DELETE       remove  200/204 (nieko negrazini(204) / grazint istrinta (200))
+
+/api/album/{albumId}/images                                     GET         list    200
+/api/album/{albumId}/images/{imageId}                           GET         one     200
+/api/album/{albumId}/images                                     POST        create  201
+/api/album/{albumId}/images/{imageId}                           PUT/PATCH   edit    200 
+/api/album/{albumId}/images/{imageId}                           DELETE      remove  200/204 (nieko negrazini(204) / grazint istrinta (200))
+
+/api/album/{albumId}/images/{imageId}/comments                  GET         list    200
+/api/album/{albumId}/images/{imageId}/comments/{commentId}      GET         one     200
+/api/album/{albumId}/images/{imageId}/comments                  POST        create  200
+/api/album/{albumId}/images/{imageId}/comments/{commentId}      PUT/PATCH   edit    200 
+/api/album/{albumId}/images/{imageId}/comments/{commentId}      DELETE      remove  200/204 (nieko negrazini(204) / grazint istrinta (200))
+
+
+VALIDATION:
+https://www.youtube.com/watch?v=cYWl5iYaRBg&ab_channel=TomasBlazauskas 48:00
+
+
+Advanced features https://www.youtube.com/watch?v=ef6VtGhvU1Y&ab_channel=TomasBlazauskas
+PAGING
+/albums?pageNumber=1&pageSize=5
+SORTING
+/albums?orderBy=creationDate
+Shaping
+/albums?fields=title,description
+HATEOAS
+..
+CACHING
+..
+CONCURRENCY
+...
+
+
+DATABASE MIGRATIONS
+dotnet ef migrations add InitialCreate -o Data/Migrations
+dotnet ef database update
