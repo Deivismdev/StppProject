@@ -8,6 +8,13 @@ using API.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
+// /api/album/{albumId}/images                                     GET         list    200
+// /api/album/{albumId}/images/{imageId}                           GET         one     200
+// /api/album/{albumId}/images                                     POST        create  201
+// /api/album/{albumId}/images/{imageId}                           PUT/PATCH   edit    200 
+// /api/album/{albumId}/images/{imageId}                           DELETE      remove  200/204 (nieko negrazini(204) / grazint istrinta (200))
+
+
 namespace API.Controllers
 {
    [ApiController]
@@ -27,6 +34,11 @@ namespace API.Controllers
             var images = await context.Images
                 .Where(i => i.Album.Id == albumId)
                 .ToListAsync();
+
+            if (images.Count == 0)
+            {
+                return NotFound();
+            }
 
             var imageDto = images.Select(image => new ImageDto
             {
@@ -90,11 +102,19 @@ namespace API.Controllers
             context.Images.Add(image);
             await context.SaveChangesAsync();
 
-            return CreatedAtAction("GetImage", new { albumId, imageId = image.Id }, image);
+            var createdImageDto = new ImageDto
+            {
+                Id = image.Id,
+                Title = image.Title,
+                Url = image.Url,
+                Description = image.Description,
+                CreationDate = image.CreationDate
+            };
+
+            return CreatedAtAction("GetImage", new { albumId, imageId = image.Id }, createdImageDto);
         }
 
         [HttpPut("{imageId}")]
-        [HttpPatch("{imageId}")]
         public async Task<IActionResult> UpdateImage(int albumId, int imageId, ImageDto imageDto)
         {
             var image = await context.Images

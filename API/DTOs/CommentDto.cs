@@ -10,7 +10,7 @@ namespace API.DTOs
     public class CommentDto
     {
         public int Id { get; set; }
-        public required string Body { get; set; }
+        public string Body { get; set; }
         public DateTime CreationDate { get; set; }
 
     }

@@ -27,9 +27,11 @@ namespace API.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Title")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -44,12 +46,13 @@ namespace API.Data.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Body")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("ImageId")
+                    b.Property<int>("ImageId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
@@ -65,19 +68,22 @@ namespace API.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("AlbumId")
+                    b.Property<int>("AlbumId")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Title")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Url")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -90,8 +96,10 @@ namespace API.Data.Migrations
             modelBuilder.Entity("API.Entities.Comment", b =>
                 {
                     b.HasOne("API.Entities.Image", "Image")
-                        .WithMany()
-                        .HasForeignKey("ImageId");
+                        .WithMany("Comments")
+                        .HasForeignKey("ImageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Image");
                 });
@@ -99,10 +107,22 @@ namespace API.Data.Migrations
             modelBuilder.Entity("API.Entities.Image", b =>
                 {
                     b.HasOne("API.Entities.Album", "Album")
-                        .WithMany()
-                        .HasForeignKey("AlbumId");
+                        .WithMany("Images")
+                        .HasForeignKey("AlbumId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Album");
+                });
+
+            modelBuilder.Entity("API.Entities.Album", b =>
+                {
+                    b.Navigation("Images");
+                });
+
+            modelBuilder.Entity("API.Entities.Image", b =>
+                {
+                    b.Navigation("Comments");
                 });
 #pragma warning restore 612, 618
         }
