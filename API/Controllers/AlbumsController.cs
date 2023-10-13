@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using API.Data;
 using API.DTOs;
 using API.Entities;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,14 +18,26 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
+    public class AlbumDtoValidator : AbstractValidator<AlbumDto>
+    {
+        public AlbumDtoValidator()
+        {
+            RuleFor(album => album.Title).NotNull().NotEmpty().WithMessage("Title is required.");
+            RuleFor(album => album.Description).NotNull().NotEmpty().WithMessage("Description is required.");
+        }
+    }
+
     [ApiController]
     [Route("api/album")]
     public class AlbumsController : ControllerBase
     {
+
         private readonly GudAppContext context;
+        private readonly AlbumDtoValidator albumDtoValidator;
         public AlbumsController(GudAppContext context)
         {
             this.context = context;
+            this.albumDtoValidator = new AlbumDtoValidator();
         }
 
         // GET: /api/album
@@ -69,6 +82,12 @@ namespace API.Controllers
         [HttpPost]
         public IActionResult CreateAlbum(AlbumDto albumDto)
         {
+
+            var validationResult = albumDtoValidator.Validate(albumDto);
+            if (!validationResult.IsValid)
+            {
+                return UnprocessableEntity(validationResult.Errors);
+            }
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -99,6 +118,11 @@ namespace API.Controllers
         [HttpPut("{albumId}")]
         public async Task<IActionResult> UpdateAlbum(int albumId, AlbumDto albumDto)
         {
+            var validationResult = albumDtoValidator.Validate(albumDto);
+            if (!validationResult.IsValid)
+            {
+                return UnprocessableEntity(validationResult.Errors);
+            }
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -112,6 +136,7 @@ namespace API.Controllers
 
             album.Title = albumDto.Title;
             album.Description = albumDto.Description;
+            await context.SaveChangesAsync();
 
             var updatedAlbumDto = new AlbumDto
             {
@@ -121,11 +146,8 @@ namespace API.Controllers
                 CreationDate = album.CreationDate
             };
 
-            await context.SaveChangesAsync();
-
-            return Ok(updatedAlbumDto); 
+            return Ok(updatedAlbumDto);
         }
-
         // DELETE: /api/album/{albumId}
         [HttpDelete("{albumId}")]
         public async Task<IActionResult> DeleteAlbum(int albumId)

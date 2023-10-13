@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using API.Data;
 using API.DTOs;
 using API.Entities;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,15 +18,28 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
+
+    public class ImageDtoValidator : AbstractValidator<ImageDto>
+    {
+        public ImageDtoValidator()
+        {
+            RuleFor(image => image.Title).NotNull().NotEmpty().WithMessage("Title is required.");
+            RuleFor(image => image.Url).NotNull().NotEmpty().WithMessage("Url is required.");
+            RuleFor(image => image.Description).NotNull().NotEmpty().WithMessage("Description is required.");
+        }
+    }
+
    [ApiController]
     [Route("api/album/{albumId}/images")]
     public class ImagesController : ControllerBase
     {
         private readonly GudAppContext context;
+        private readonly ImageDtoValidator imageDtoValidator;
 
         public ImagesController(GudAppContext context)
         {
             this.context = context;
+            this.imageDtoValidator = new ImageDtoValidator();
         }
 
         [HttpGet]
@@ -79,6 +93,12 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateImage(int albumId, ImageDto imageDto)
         {
+            var validationResult = imageDtoValidator.Validate(imageDto);
+            if (!validationResult.IsValid)
+            {
+                return UnprocessableEntity(validationResult.Errors);
+            }
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -117,6 +137,12 @@ namespace API.Controllers
         [HttpPut("{imageId}")]
         public async Task<IActionResult> UpdateImage(int albumId, int imageId, ImageDto imageDto)
         {
+            var validationResult = imageDtoValidator.Validate(imageDto);
+            if (!validationResult.IsValid)
+            {
+                return UnprocessableEntity(validationResult.Errors);
+            }
+
             var image = await context.Images
                 .Where(i => i.Album.Id == albumId && i.Id == imageId)
                 .FirstOrDefaultAsync();

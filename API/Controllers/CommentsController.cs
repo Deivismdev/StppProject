@@ -5,20 +5,31 @@ using System.Threading.Tasks;
 using API.Data;
 using API.DTOs;
 using API.Entities;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
+    public class CommentDtoValidator : AbstractValidator<CommentDto>
+    {
+        public CommentDtoValidator()
+        {
+            RuleFor(comment => comment.Body).NotNull().NotEmpty().WithMessage("Body is required.");
+        }
+    }
+
 [ApiController]
 [Route("api/album/{albumId}/images/{imageId}/comments")]
 public class CommentsController : ControllerBase
 {
     private readonly GudAppContext context;
+    private readonly CommentDtoValidator commentDtoValidator;
 
     public CommentsController(GudAppContext context)
     {
         this.context = context;
+        this.commentDtoValidator = new CommentDtoValidator();
     }
 
     [HttpGet]
@@ -69,6 +80,11 @@ public class CommentsController : ControllerBase
     [HttpPost]
     public IActionResult CreateComment(int albumId, int imageId, CommentDto commentDto)
     {
+        var validationResult = commentDtoValidator.Validate(commentDto);
+        if (!validationResult.IsValid)
+        {
+            return UnprocessableEntity(validationResult.Errors);
+        }
         // make async
         if (!ModelState.IsValid)
         {
@@ -105,6 +121,11 @@ public class CommentsController : ControllerBase
     [HttpPut("{commentId}")]
     public IActionResult UpdateComment(int albumId, int imageId, int commentId, CommentDto commentDto)
     {
+        var validationResult = commentDtoValidator.Validate(commentDto);
+        if (!validationResult.IsValid)
+        {
+            return UnprocessableEntity(validationResult.Errors);
+        }
         // make async
         if (!ModelState.IsValid)
         {

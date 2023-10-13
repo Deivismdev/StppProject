@@ -26,7 +26,10 @@
 
 VALIDATION:
 https://www.youtube.com/watch?v=cYWl5iYaRBg&ab_channel=TomasBlazauskas 48:00
-
+• Not found            - kai nera resurso
+• Bad request          - neteisingai suformatuotas json
+• 422 (Unprocessable Entity) - handle null or empty string
+• 500                  - internal server error !turetu nebut!
 
 Advanced features https://www.youtube.com/watch?v=ef6VtGhvU1Y&ab_channel=TomasBlazauskas
 PAGING
