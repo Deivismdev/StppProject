@@ -1,11 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using API.Auth.Entities;
 using API.Data;
-using API.DTOs;
+using API.Dtos;
 using API.Entities;
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -29,18 +33,21 @@ namespace API.Controllers
         }
     }
 
-   [ApiController]
+    [ApiController]
     [Route("api/album/{albumId}/images")]
     public class ImagesController : ControllerBase
     {
         private readonly GudAppContext context;
         private readonly ImageDtoValidator imageDtoValidator;
+        private readonly IAuthorizationService authorizationService;
 
-        public ImagesController(GudAppContext context)
+        public ImagesController(GudAppContext context, IAuthorizationService authorizationService)
         {
             this.context = context;
             this.imageDtoValidator = new ImageDtoValidator();
+            this.authorizationService = authorizationService;
         }
+
 
         [HttpGet]
         public async Task<IActionResult> GetImages(int albumId)
@@ -61,6 +68,7 @@ namespace API.Controllers
                 Url = image.Url,
                 Description = image.Description,
                 CreationDate = image.CreationDate
+
             }).ToList();
 
             return Ok(imageDto);
@@ -77,20 +85,21 @@ namespace API.Controllers
             {
                 return NotFound();
             }
-            
+
             var imageDto = new ImageDto
             {
                 Id = image.Id,
                 Title = image.Title,
                 Url = image.Url,
                 Description = image.Description,
-                CreationDate = image.CreationDate
+                CreationDate = image.CreationDate,
             };
 
             return Ok(imageDto);
         }
 
         [HttpPost]
+        [Authorize(Roles = UserRoles.Member)]
         public async Task<IActionResult> CreateImage(int albumId, ImageDto imageDto)
         {
             var validationResult = imageDtoValidator.Validate(imageDto);
@@ -116,7 +125,8 @@ namespace API.Controllers
                 Url = imageDto.Url,
                 Description = imageDto.Description,
                 Album = album,
-                CreationDate = DateTime.UtcNow
+                CreationDate = DateTime.UtcNow,
+                UserId = User.FindFirstValue(JwtRegisteredClaimNames.Sub)
             };
 
             context.Images.Add(image);
@@ -135,6 +145,7 @@ namespace API.Controllers
         }
 
         [HttpPut("{imageId}")]
+        [Authorize(Roles = UserRoles.Member)]
         public async Task<IActionResult> UpdateImage(int albumId, int imageId, ImageDto imageDto)
         {
             var validationResult = imageDtoValidator.Validate(imageDto);
@@ -151,6 +162,11 @@ namespace API.Controllers
             {
                 return NotFound();
             }
+            var authorizationResult = await authorizationService.AuthorizeAsync(User, image, PolicyNames.ResourceOwner);
+            if (!authorizationResult.Succeeded)
+            {
+                return Forbid();
+            }
 
             image.Title = imageDto.Title;
             image.Url = imageDto.Url;
@@ -158,7 +174,8 @@ namespace API.Controllers
 
             await context.SaveChangesAsync();
 
-            var response = new ImageDto{
+            var response = new ImageDto
+            {
                 Id = image.Id,
                 Title = image.Title,
                 Url = image.Url,
@@ -170,6 +187,7 @@ namespace API.Controllers
         }
 
         [HttpDelete("{imageId}")]
+        [Authorize(Roles = UserRoles.Member)]
         public async Task<IActionResult> DeleteImage(int albumId, int imageId)
         {
             var image = await context.Images
@@ -179,6 +197,11 @@ namespace API.Controllers
             if (image == null)
             {
                 return NotFound();
+            }
+            var authorizationResult = await authorizationService.AuthorizeAsync(User, image, PolicyNames.ResourceOwner);
+            if (!authorizationResult.Succeeded)
+            {
+                return Forbid();
             }
 
             context.Images.Remove(image);

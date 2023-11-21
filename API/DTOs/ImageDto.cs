@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using API.Entities;
 
-namespace API.DTOs
+namespace API.Dtos
 {
     public class ImageDto
     {

@@ -1,3 +1,32 @@
+
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+!!! PROBABLY SHOULD MIGRATE TO .NET 8 !!!
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+2 LAB - OAuth/JWT autorizacija + talpinimas debesyje
+JWT autorizacija
+https://www.youtube.com/watch?v=2UJNheQ5hIY 2023
+https://www.youtube.com/watch?v=u_9fA4dRGAE 2022
+
+• Realizuotas produktas turi būti pasiekiamas saityne, tam panaudojant debesų technologijas (AWS, Azure, Google Cloud ir kt.);
+• Turi būti realizuota autentifikacja ir autorizacija naudojant OAuth2 arba JWT technologinius sprendimus. Naudotojo rolė turi būti saugoma žetono (token) viduje.  
+• Projekto kodas turi būti laikomas Git saugykloje (github, bitbucket, gitlab ar kt.). Dokumentacija - projektui sukurtame wiki arba projekto kodo Git saugykloje (.readme).
+
+workflow:
+• install libraries
+    Indentity
+    EntityFrameworkCore
+    JwtBearer
+• configure startup
+• extend DB with indentity and run migrations
+• Token generation
+• Register/login
+• Seeding with roles and admin
+• Authorization of resources
+
+
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+1 laboratorinis - API sąsaja
+
 • Suprojektuoti ir realizuoti REST principais veikiančią API sąsają. Turi būti realizuoti visi užduotyje numatyti API sąsajos metodai!
 • Paruošti programavimo aplinką leidžiančią atsiskaitymo metu patogiai paleisti ir pademonstruoti programą.
 • Duomenų saugojimui turi būti panaudotas pasirinktas DB sprendimas. Gynimo metu DB turi būti užpildyta prasmingais (uždavinį atitinkančiais) duomenimis;

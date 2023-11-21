@@ -1,11 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using API.Auth.Entities;
 using API.Data;
-using API.DTOs;
+using API.Dtos;
 using API.Entities;
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,11 +35,13 @@ namespace API.Controllers
     [Route("api/album")]
     public class AlbumsController : ControllerBase
     {
-
+        // should add _ to private fields
+        private readonly IAuthorizationService authorizationService;
         private readonly GudAppContext context;
         private readonly AlbumDtoValidator albumDtoValidator;
-        public AlbumsController(GudAppContext context)
+        public AlbumsController(GudAppContext context, IAuthorizationService authorizationService)
         {
+            this.authorizationService = authorizationService;
             this.context = context;
             this.albumDtoValidator = new AlbumDtoValidator();
         }
@@ -80,6 +86,7 @@ namespace API.Controllers
 
         // POST: /api/album
         [HttpPost]
+        [Authorize(Roles = UserRoles.Member)]
         public IActionResult CreateAlbum(AlbumDto albumDto)
         {
 
@@ -97,7 +104,8 @@ namespace API.Controllers
             {
                 Title = albumDto.Title,
                 Description = albumDto.Description,
-                CreationDate = DateTime.UtcNow
+                CreationDate = DateTime.UtcNow,
+                UserId = User.FindFirstValue(JwtRegisteredClaimNames.Sub)
             };
 
             context.Albums.Add(album);
@@ -116,6 +124,7 @@ namespace API.Controllers
 
         // PUT: /api/album/{albumId}
         [HttpPut("{albumId}")]
+        [Authorize(Roles = UserRoles.Member)]
         public async Task<IActionResult> UpdateAlbum(int albumId, AlbumDto albumDto)
         {
             var validationResult = albumDtoValidator.Validate(albumDto);
@@ -132,6 +141,13 @@ namespace API.Controllers
             if (album == null)
             {
                 return NotFound();
+            }
+
+            var authorizationResult = await authorizationService.AuthorizeAsync(User, album, PolicyNames.ResourceOwner); // this is what triggers ResourceOwnerAuthorizationHandler
+            if (!authorizationResult.Succeeded)
+            {
+                // arba 404 jeigu nenori parodyt kad toks yra
+                return Forbid();
             }
 
             album.Title = albumDto.Title;
@@ -156,6 +172,12 @@ namespace API.Controllers
             if (album == null)
             {
                 return NotFound();
+            }
+
+            var authorizationResult = await authorizationService.AuthorizeAsync(User, album, PolicyNames.ResourceOwner);
+            if (!authorizationResult.Succeeded)
+            {
+                return Forbid();
             }
 
             context.Albums.Remove(album);

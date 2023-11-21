@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using API.Entities;
 
-namespace API.DTOs
+namespace API.Dtos
 {
     public class CommentDto
     {

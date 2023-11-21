@@ -1,8 +1,10 @@
 using System.ComponentModel.DataAnnotations;
+using API.Auth.Entities;
+using API.Auth.Model;
 
 namespace API.Entities
 {
-    public class Image
+    public class Image : IUserOwnedResource
     {
         public int Id { get; set; }
         [Required]
@@ -18,7 +20,9 @@ namespace API.Entities
         public Album Album {get; set;}
 
         public IList<Comment> Comments {get; set;} = new List<Comment>();
-
+        [Required]
+        public string UserId {get;set;}
+        public User User {get;set;}
     }
 
 }
