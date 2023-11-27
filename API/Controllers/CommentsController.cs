@@ -4,7 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using API.Auth.Entities;
+using API.Auth;
 using API.Data;
 using API.Dtos;
 using API.Entities;

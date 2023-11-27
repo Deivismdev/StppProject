@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using API.Auth.Entities;
-using API.Auth.Model;
+using API.Auth;
+using API.Entities;
 using Microsoft.AspNetCore.Identity;
 
 namespace API.Data

@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using API.Auth.Entities;
-using API.Auth.Model;
+using API.Auth;
 
 namespace API.Entities
 {

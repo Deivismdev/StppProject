@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using API.Auth.Dtos;
-using API.Auth.Model;
-using Microsoft.AspNetCore.Identity;
 using API.Auth;
-using API.Auth.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
+using API.Entities;
+
 namespace API.Controllers
 {
     [ApiController]
@@ -21,12 +21,12 @@ namespace API.Controllers
     public class AuthController : ControllerBase
     {
         private readonly UserManager<User> _userManager;
-        private readonly JwtTokenService _jtwTokenService;
+        private readonly TokenService _jtwTokenService;
 
-        public AuthController(UserManager<User> userManager, JwtTokenService jwtTokenService)
+        public AuthController(UserManager<User> userManager, TokenService tokenService)
         {
             _userManager = userManager;
-            _jtwTokenService = jwtTokenService;
+            _jtwTokenService = tokenService;
         }
 
         [HttpPost]

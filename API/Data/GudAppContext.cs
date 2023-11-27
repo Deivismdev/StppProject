@@ -1,5 +1,5 @@
 using System.Runtime.CompilerServices;
-using API.Auth.Model;
+using API.Auth;
 using API.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;

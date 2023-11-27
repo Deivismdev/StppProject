@@ -10,12 +10,12 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace API.Auth
 {
-    public class JwtTokenService
+    public class TokenService
     {
         private readonly SymmetricSecurityKey _authSigningKey;
         private readonly string _issuer;
         private readonly string _audience;
-        public JwtTokenService(IConfiguration configuration)
+        public TokenService(IConfiguration configuration)
         {
             _authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Secret"]));
             _issuer = configuration["Jwt:ValidIssuer"];

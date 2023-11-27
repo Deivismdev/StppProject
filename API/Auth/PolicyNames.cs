@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace API.Auth.Entities
+namespace API.Auth
 {
     public static class PolicyNames
     {

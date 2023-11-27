@@ -1,8 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using API.Auth;
-using API.Auth.Entities;
-using API.Auth.Model;
+using API.Auth;
 using API.Controllers;
 using API.Data;
 using API.Dtos;
@@ -45,7 +44,7 @@ builder.Services.AddAuthentication(options => {
 });
 
 builder.Services.AddTransient<IValidator<AlbumDto>, AlbumDtoValidator>();
-builder.Services.AddTransient<JwtTokenService, JwtTokenService>();
+builder.Services.AddTransient<TokenService, TokenService>();
 builder.Services.AddScoped<AuthDbSeeder>();
 builder.Services.AddAuthorization(options =>
 {

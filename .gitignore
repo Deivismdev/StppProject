@@ -475,4 +475,7 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+# my ignores
 API/appsettings.json
+notes.txt
