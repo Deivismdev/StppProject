@@ -1,7 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using API.Auth;
-using API.Auth;
 using API.Controllers;
 using API.Data;
 using API.Dtos;
@@ -11,7 +10,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
